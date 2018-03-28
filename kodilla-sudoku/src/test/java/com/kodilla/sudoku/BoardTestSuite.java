@@ -3,6 +3,7 @@ package com.kodilla.sudoku;
 import com.kodilla.sudoku.exceptions.OutOfRangeException;
 import com.kodilla.sudoku.exceptions.WrongNumberOfValuesException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Set;
@@ -344,7 +345,7 @@ public class BoardTestSuite {
         Assert.assertFalse(copiedBoard.getFields()[1][0].getPossibleValues().contains(2));
     }
 
-    @Test
+    @Ignore
     public void testSolving() {
         // Given
         Board board = new Board();
