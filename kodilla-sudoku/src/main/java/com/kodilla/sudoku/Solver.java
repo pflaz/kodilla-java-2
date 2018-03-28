@@ -5,6 +5,7 @@ import com.kodilla.sudoku.exceptions.WrongNumberOfValuesException;
 import com.kodilla.sudoku.exceptions.WrongValuesException;
 
 import java.util.Scanner;
+import java.util.Set;
 
 public class Solver {
     private String[] rows = new String[9];
@@ -71,22 +72,22 @@ public class Solver {
         return true;
     }
 
-    public boolean solveByFillingEvidentValues() {
+    public boolean showSolutions() {
+        Set<Board> solutions = null;
         try {
-            int filledEvidentValues = mainBoard.fillAllEvidentValues();
-        } catch (OutOfRangeException e) {
-            System.out.println("Error: " + e);
+            solutions = mainBoard.solve();
+        } catch (OutOfRangeException | CloneNotSupportedException e) {
+            System.out.println("An error occured.");
             return false;
         }
-        boolean isSolved = mainBoard.isSolved();
-        if (isSolved) {
-            System.out.println("Difficulty level is 1 - SOLVED:");
-            System.out.println(mainBoard.toString());
-        } else {
-            System.out.println("Difficulty level is more than 1 - NOT SOLVED YET...");
-            System.out.println(mainBoard.toString());
+        System.out.println("Number of solutions: " + solutions.size());
+        int solutionCounter = 0;
+        for (Board solution : solutions) {
+            solutionCounter++;
+            System.out.println("\nSolution " + solutionCounter);
+            System.out.println(solution.toString());
         }
-        return isSolved;
+        return true;
     }
 
 

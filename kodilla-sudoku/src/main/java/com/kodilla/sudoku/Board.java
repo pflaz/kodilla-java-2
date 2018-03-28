@@ -5,11 +5,13 @@ import com.kodilla.sudoku.exceptions.SolvedBoardException;
 import com.kodilla.sudoku.exceptions.UnsolvableBoardException;
 import com.kodilla.sudoku.exceptions.WrongNumberOfValuesException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Board extends Prototype {
     private Field[][] fields = new Field[9][9];
+
+    // TODO delete
+    public static int counter = 0;
 
     public Board() {
         for (int column = 0; column < 9; column++) {
@@ -17,6 +19,19 @@ public class Board extends Prototype {
                 fields[column][row] = new Field();
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Board board = (Board) o;
+        return Arrays.deepEquals(fields, board.fields);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(fields);
     }
 
     private boolean checkValuePresenceInRow(int value, int row) {
@@ -211,36 +226,74 @@ public class Board extends Prototype {
         return columnRowDto;
     }
 
-    public List<Board> solve() throws OutOfRangeException {
-        List<Board> solutions = new ArrayList<>();
+    public Set<Board> solve() throws OutOfRangeException, CloneNotSupportedException {
+        Set<Board> solutions = new HashSet<>();
+
+        // TODO delete
+        counter++;
+        if (counter > 10) {
+            System.out.println("COUNTER >10 - EXIT");
+            return solutions;
+        }
+        System.out.println("\nFilling evident values...");
 
         fillAllEvidentValues();
+
+        // TODO delete
+        System.out.println(this.toString());
+
         if (isSolved()) {
             solutions.add(this);
+
+            // TODO delete
+            System.out.println("SOLVED");
+
+            return solutions;
         }
-        if (isUnsolvable()) return null;
+        if (isUnsolvable()) {
+
+            // TODO delete
+            System.out.println("UNSOLVABLE");
+
+            return solutions; // 0 elements
+        }
 
         for (int column = 0; column < 9; column++) {
             for (int row = 0; row < 9; row++) {
                 if (fields[column][row].getValue() == 0 && fields[column][row].getPossibleValues().size() > 0) {
                     for (int possibleValue : fields[column][row].getPossibleValues()) {
+                        Board copiedBoardForTestingValues = this.copy();
+                        copiedBoardForTestingValues.setFieldsValue(column, row, possibleValue);
 
+                        // TODO delete
+                        System.out.println("Testing: value " + possibleValue + " to field: " + column + ", " + row);
+
+                        copiedBoardForTestingValues.fillAllEvidentValues();
+
+                        // TODO delete
+                       // System.out.println(copiedBoardForTestingValues.toString());
+
+                        if (copiedBoardForTestingValues.isSolved()) {
+                            solutions.add(copiedBoardForTestingValues);
+
+                            // TODO delete
+                            System.out.println("SOLVED");
+                        }
                     }
                 }
             }
         }
-
         return solutions;
     }
 
     public Board copy() throws CloneNotSupportedException {
-        Board result;
-        result = (Board)super.clone();
-
-        return result;
+        Board clonedBoard = (Board)super.clone();
+        clonedBoard.fields = new Field[9][9];
+        for (int column = 0; column < 9; column++) {
+            for (int row = 0; row < 9; row++) {
+                clonedBoard.fields[column][row] = this.fields[column][row].copy();
+            }
+        }
+        return clonedBoard;
     }
-
-
-
-
 }

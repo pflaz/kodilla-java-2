@@ -5,6 +5,8 @@ import com.kodilla.sudoku.exceptions.WrongNumberOfValuesException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Set;
+
 public class BoardTestSuite {
 
     @Test
@@ -308,9 +310,6 @@ public class BoardTestSuite {
         String[] values = {"004093100", "030400050", "800017003",
                 "609000080", "508030701", "010000902",
                 "900160007", "070002010", "002370800"};
-        String[] blankValues = {"000000000", "000000000", "000000000",
-                "000000000", "000000000", "000000000",
-                "000000000", "000000000", "000000000"};
         try {
             board.setAllValues(values);
         } catch (OutOfRangeException | WrongNumberOfValuesException e) {
@@ -325,8 +324,7 @@ public class BoardTestSuite {
             System.out.println(e);
         }
         try {
-            copiedBoard.setFieldsValue(0, 0, 9);
-            System.out.println("test:" + copiedBoard.getFields()[0][0].getValue());
+            copiedBoard.setFieldsValue(0, 0, 2);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -338,6 +336,94 @@ public class BoardTestSuite {
         System.out.println();
         System.out.println("Coppied board:");
         System.out.println(copiedBoard.toString());
+
+        Assert.assertEquals(0, board.getFields()[0][0].getValue());
+        Assert.assertEquals(2, board.getFields()[0][0].getPossibleValues().size());
+        Assert.assertEquals(2, copiedBoard.getFields()[0][0].getValue());
+        Assert.assertTrue(board.getFields()[1][0].getPossibleValues().contains(2));
+        Assert.assertFalse(copiedBoard.getFields()[1][0].getPossibleValues().contains(2));
+    }
+
+    @Test
+    public void testSolving() {
+        // Given
+        Board board = new Board();
+        String[] values = {"004093100", "030400050", "800017003",
+                "609000080", "508030701", "010000902",
+                "900160007", "070002010", "002370800"};
+        try {
+            board.setAllValues(values);
+        } catch (OutOfRangeException | WrongNumberOfValuesException e) {
+            System.out.println(e);
+        }
+
+        Set<Board> solutions = null;
+
+        // When
+        try {
+           solutions = board.solve();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        // Then
+        System.out.println("Number of solutions: " + solutions.size());
+        int solutionCounter = 0;
+
+        Board board1 = null;
+        Board board2 = null;
+        Board board3 = null;
+
+        for (Board solution : solutions) {
+            solutionCounter++;
+
+            if (solutionCounter == 1) board1 = solution;
+            if (solutionCounter == 2) board2 = solution;
+            if (solutionCounter == 3) board3 = solution;
+
+            System.out.println("\nSolution " + solutionCounter);
+            System.out.println(solution.toString());
+        }
+
+        boolean comparison1to2 = board1.equals(board2);
+        System.out.println("comparison 1 to 2 result: " + comparison1to2);
+
+        Assert.assertEquals(1, solutions.size());
+    }
+
+    @Test
+    public void testBoardsEqualing() {
+        // Given
+
+        String[] values = {"004093100", "030400050", "800017003",
+                "609000080", "508030701", "010000902",
+                "900160007", "070002010", "002370800"};
+        String[] blankValues = {"000000000", "000000000", "000000000",
+                "000000000", "000000000", "000000000",
+                "000000000", "000000000", "000000000"};
+
+        Board board1 = new Board();
+        Board board2 = new Board();
+        Board board3 = new Board();
+        try {
+            board1.setAllValues(values);
+            board2.setAllValues(values);
+            board3.setAllValues(blankValues);
+        } catch (OutOfRangeException | WrongNumberOfValuesException e) {
+            System.out.println(e);
+        }
+
+        // When
+
+        boolean comparison1to2 = board1.equals(board2);
+        boolean comparison2to1 = board2.equals(board1);
+        boolean comparison1to3 = board1.equals(board3);
+
+        // Then
+
+        Assert.assertTrue(comparison1to2);
+        Assert.assertTrue(comparison2to1);
+        Assert.assertFalse(comparison1to3);
 
     }
 }

@@ -13,7 +13,7 @@ public class Sudoku {
             if (!valuesProvided) break;
             boardCreated = solver.createBoard();
             if (boardCreated) {
-                solvedLevel1 = solver.solveByFillingEvidentValues();
+                solver.showSolutions();
             }
             System.out.println();
         } while (valuesProvided);
