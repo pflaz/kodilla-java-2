@@ -1,0 +1,343 @@
+package com.kodilla.sudoku;
+
+import com.kodilla.sudoku.exceptions.OutOfRangeException;
+import com.kodilla.sudoku.exceptions.WrongNumberOfValuesException;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class BoardTestSuite {
+
+    @Test
+    public void testCreatingEmptyBoard() {
+        // Given
+        Board board = new Board();
+
+        // When
+        System.out.println(board.toString());
+        int numberOfColumns = board.getFields().length;
+
+        // Then
+        Assert.assertEquals(9, numberOfColumns);
+    }
+
+    @Test
+    public void testFillingTheSameField() {
+        // Given
+        Board board = new Board();
+
+        // When
+        boolean result1 = false;
+        boolean result2 = false;
+        try {
+            result1 = board.setFieldsValue(1, 8, 5);
+            result2 = board.setFieldsValue(1, 8, 6);
+        } catch (OutOfRangeException e) {
+            System.out.println(e);
+        }
+
+
+        // Then
+        System.out.println(board.toString());
+
+        Assert.assertTrue(result1);
+        Assert.assertFalse(result2);
+        Assert.assertEquals(5, board.getFields()[1][8].getValue());
+    }
+
+
+    @Test
+    public void testFillingDuplicateInRow() {
+        // Given
+        Board board = new Board();
+
+        // When
+        boolean result1 = false;
+        boolean result2 = false;
+        boolean result3 = false;
+        try {
+            result1 = board.setFieldsValue(1, 8, 5);
+            result2 = board.setFieldsValue(3, 8, 6);
+            result3 = board.setFieldsValue(6, 8, 5);
+        } catch (OutOfRangeException e) {
+            System.out.println(e);
+        }
+
+
+        // Then
+        System.out.println(board.toString());
+
+        Assert.assertTrue(result1);
+        Assert.assertTrue(result2);
+        Assert.assertFalse(result3);
+        Assert.assertEquals(5, board.getFields()[1][8].getValue());
+        Assert.assertEquals(6, board.getFields()[3][8].getValue());
+        Assert.assertEquals(0, board.getFields()[6][8].getValue());
+    }
+
+    @Test
+    public void testFillingDuplicateInColumn() {
+        // Given
+        Board board = new Board();
+
+        // When
+        boolean result1 = false;
+        boolean result2 = false;
+        boolean result3 = false;
+        try {
+            result1 = board.setFieldsValue(1, 8, 5);
+            result2 = board.setFieldsValue(1, 6, 6);
+            result3 = board.setFieldsValue(1, 1, 5);
+        } catch (OutOfRangeException e) {
+            System.out.println(e);
+        }
+
+
+        // Then
+        System.out.println(board.toString());
+
+        Assert.assertTrue(result1);
+        Assert.assertTrue(result2);
+        Assert.assertFalse(result3);
+        Assert.assertEquals(5, board.getFields()[1][8].getValue());
+        Assert.assertEquals(6, board.getFields()[1][6].getValue());
+        Assert.assertEquals(0, board.getFields()[1][1].getValue());
+    }
+
+    @Test
+    public void testFillingDuplicateInBlock() {
+        // Given
+        Board board = new Board();
+
+        // When
+        boolean result1 = false;
+        boolean result2 = false;
+        boolean result3 = false;
+        try {
+            result1 = board.setFieldsValue(3, 3, 5);
+            result2 = board.setFieldsValue(4, 4, 6);
+            result3 = board.setFieldsValue(5, 5, 5);
+        } catch (OutOfRangeException e) {
+            System.out.println(e);
+        }
+
+
+        // Then
+        System.out.println(board.toString());
+
+        Assert.assertTrue(result1);
+        Assert.assertTrue(result2);
+        Assert.assertFalse(result3);
+        Assert.assertEquals(5, board.getFields()[3][3].getValue());
+        Assert.assertEquals(6, board.getFields()[4][4].getValue());
+        Assert.assertEquals(0, board.getFields()[5][5].getValue());
+    }
+
+    @Test
+    public void testSetRowValues() {
+        // Given
+        Board board = new Board();
+
+        // When
+        String values = "123456780";
+        boolean result = false;
+        try {
+            result = board.setRowsValues(1, values);
+        } catch (OutOfRangeException | WrongNumberOfValuesException e) {
+            System.out.println(e);
+        }
+
+        // Then
+        Assert.assertTrue(result);
+        System.out.println(board.toString());
+    }
+
+    @Test
+    public void testSetAllValues() {
+        // Given
+        Board board = new Board();
+        String[] values = {"974281356", "638594271", "512736984",
+                "459823167", "381967425", "726145893",
+                "843679512", "197452638", "265318749"};
+
+        // When
+        boolean result = false;
+        try {
+            result = board.setAllValues(values);
+        } catch (WrongNumberOfValuesException | OutOfRangeException e) {
+            System.out.println(e);
+        }
+
+        //Then
+        System.out.println(board.toString());
+        Assert.assertTrue(result);
+
+    }
+
+    @Test
+    public void testFillEvidentValues() {
+        // Given
+        Board board = new Board();
+
+        // When
+        String values = "123456700";
+        try {
+            board.setRowsValues(1, values);
+        } catch (OutOfRangeException | WrongNumberOfValuesException e) {
+            System.out.println(e);
+        }
+
+        int filled = 0;
+        try {
+            filled = board.fillEvidentValuesOnce();
+        } catch (OutOfRangeException e) {
+            System.out.println(e);
+        }
+
+        // Then
+        Assert.assertEquals(0, filled);
+        System.out.println(board.toString());
+    }
+
+    @Test
+    public void testSolveByFillingEvidentValues() {
+        // Given
+        Board board = new Board();
+        String[] values = {"970200006", "008000201", "012700980",
+                "000020107", "000967000", "706040000",
+                "043009510", "107000600", "200008049"};
+
+        // When
+        try {
+            board.setAllValues(values);
+        } catch (OutOfRangeException | WrongNumberOfValuesException e) {
+            System.out.println(e);
+        }
+
+        int filled = 0;
+        try {
+            filled = board.fillAllEvidentValues();
+        } catch (OutOfRangeException e) {
+            System.out.println(e);
+        }
+
+        // Then
+        System.out.println("filled: " + filled);
+        System.out.println(board.toString());
+    }
+
+    @Test
+    public void testSolveByFillingEvidentValues2() {
+        // Given
+        Board board = new Board();
+        String[] values = {"060430028", "000918030", "004020000",
+                "090000302", "306090507", "201000080",
+                "000080100", "010254000", "980067040"};
+
+        // When
+        try {
+            board.setAllValues(values);
+        } catch (OutOfRangeException | WrongNumberOfValuesException e) {
+            System.out.println(e);
+        }
+
+        int filled = 0;
+        try {
+            filled = board.fillAllEvidentValues();
+        } catch (OutOfRangeException e) {
+            System.out.println(e);
+        }
+
+        // Then
+        System.out.println("filled: " + filled);
+        System.out.println(board.toString());
+    }
+
+    @Test
+    public void testIsSolved() {
+        // Given
+        Board board = new Board();
+        String[] values = {"974281356", "638594271", "512736984",
+                "459823167", "381967425", "726145893",
+                "843679512", "197452638", "265318749"};
+
+        // When
+        try {
+            board.setAllValues(values);
+        } catch (WrongNumberOfValuesException | OutOfRangeException e) {
+            System.out.println(e);
+        }
+
+        //Then
+        System.out.println(board.toString());
+        Assert.assertTrue(board.isSolved());
+
+    }
+
+    @Test
+    public void testFindMinimumPossibleValues() {
+        // Given
+        Board board = new Board();
+        String[] values = {"004093100", "030400050", "800017003",
+                "609000080", "508030701", "010000902",
+                "900160007", "070002010", "002370800"};
+        try {
+            board.setAllValues(values);
+        } catch (OutOfRangeException | WrongNumberOfValuesException e) {
+            System.out.println(e);
+        }
+
+        // When
+        ColumnRowDto columnRowDto = new ColumnRowDto(-1, -1);
+
+        try {
+            columnRowDto = board.findFieldWithMinimumPossibleValues();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        int min = board.getFields()[columnRowDto.getColumn()][columnRowDto.getRow()].getPossibleValues().size();
+
+        // Then
+        System.out.println("field with minimum possible values: " + columnRowDto.getColumn() + ", " + columnRowDto.getRow());
+        System.out.println("min: " + min);
+    }
+
+    @Test
+    public void testCopyBoard() {
+        // Given
+        Board board = new Board();
+        String[] values = {"004093100", "030400050", "800017003",
+                "609000080", "508030701", "010000902",
+                "900160007", "070002010", "002370800"};
+        String[] blankValues = {"000000000", "000000000", "000000000",
+                "000000000", "000000000", "000000000",
+                "000000000", "000000000", "000000000"};
+        try {
+            board.setAllValues(values);
+        } catch (OutOfRangeException | WrongNumberOfValuesException e) {
+            System.out.println(e);
+        }
+
+        // When
+        Board copiedBoard = new Board();
+        try {
+            copiedBoard = board.copy();
+        } catch (CloneNotSupportedException e) {
+            System.out.println(e);
+        }
+        try {
+            copiedBoard.setFieldsValue(0, 0, 9);
+            System.out.println("test:" + copiedBoard.getFields()[0][0].getValue());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        //Then
+
+        System.out.println("Original board:");
+        System.out.println(board.toString());
+        System.out.println();
+        System.out.println("Coppied board:");
+        System.out.println(copiedBoard.toString());
+
+    }
+}
