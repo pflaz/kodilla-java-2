@@ -31,7 +31,7 @@ public class Board extends Prototype {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(fields);
+        return Arrays.deepHashCode(fields);
     }
 
     private boolean checkValuePresenceInRow(int value, int row) {
