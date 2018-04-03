@@ -30,6 +30,6 @@ public class ProductDaoTestSuite {
         Assert.assertNotEquals(0, productId);
 
         // CleanUp
-       // productDao.delete(productId);
+        productDao.delete(productId);
     }
 }

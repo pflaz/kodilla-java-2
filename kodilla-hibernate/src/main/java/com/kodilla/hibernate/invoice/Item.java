@@ -28,7 +28,7 @@ public class Item {
     @Id
     @GeneratedValue
     @NotNull
-    @Column(name = "ITEM_ID", unique = true)
+    @Column(name = "ID", unique = true)
     public int getId() {
         return id;
     }
@@ -57,7 +57,9 @@ public class Item {
         return value;
     }
 
-    @ManyToOne
+    @ManyToOne (
+            cascade = CascadeType.ALL
+    )
     @JoinColumn(name = "INVOICE_ID")
     public Invoice getInvoice() {
         return invoice;
@@ -83,7 +85,7 @@ public class Item {
         this.value = value;
     }
 
-    private void setInvoice(Invoice invoice) {
+    public void setInvoice(Invoice invoice) {
         this.invoice = invoice;
     }
 }

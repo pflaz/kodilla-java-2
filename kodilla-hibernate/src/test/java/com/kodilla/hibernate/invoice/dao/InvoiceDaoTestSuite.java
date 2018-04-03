@@ -25,12 +25,18 @@ public class InvoiceDaoTestSuite {
         Product product1 = new Product("name of product 1");
         Product product2 = new Product("name of product 2");
         Item item1 = new Item(product1, new BigDecimal(25), 4);
+        product1.getItems().add(item1);
         Item item2 = new Item(product1, new BigDecimal(20), 10);
+        product1.getItems().add(item2);
         Item item3 = new Item(product2, new BigDecimal(30), 1);
+        product2.getItems().add(item3);
         Invoice invoice = new Invoice("12345");
         invoice.getItems().add(item1);
         invoice.getItems().add(item2);
         invoice.getItems().add(item3);
+        item1.setInvoice(invoice);
+        item2.setInvoice(invoice);
+        item3.setInvoice(invoice);
 
 
         // When
@@ -39,11 +45,11 @@ public class InvoiceDaoTestSuite {
 
         // Then
         Assert.assertNotEquals(0, invoiceId);
-//        Assert.assertEquals(2, product1.getItems().size()); // ??
+        Assert.assertEquals(2, product1.getItems().size());
 
         // CleanUp
         try {
-//            invoiceDao.delete(invoiceId);
+            invoiceDao.delete(invoiceId);
         } catch (Exception e) {
             // do nothing
         }
@@ -73,7 +79,7 @@ public class InvoiceDaoTestSuite {
 
         // CleanUp
         try {
-//            invoiceDao.delete(invoiceId);
+            invoiceDao.delete(invoiceId);
         } catch (Exception e) {
             // do nothing
         }

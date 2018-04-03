@@ -35,6 +35,6 @@ public class ItemDaoTestSuite {
         Assert.assertNotEquals(0, item1Id);
 
         // CleanUp
-//        itemDao.delete(item1Id);
+        itemDao.delete(item1Id);
     }
 }
