@@ -76,7 +76,7 @@ public class Solver {
         Set<Board> solutions = null;
         try {
             solutions = mainBoard.solve();
-        } catch (OutOfRangeException | CloneNotSupportedException e) {
+        } catch (Exception e) {
             System.out.println("An error occured.");
             return false;
         }

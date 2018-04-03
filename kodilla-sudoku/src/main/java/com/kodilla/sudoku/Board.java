@@ -226,67 +226,88 @@ public class Board extends Prototype {
         return columnRowDto;
     }
 
-    public Set<Board> solve() throws OutOfRangeException, CloneNotSupportedException {
-        Set<Board> solutions = new HashSet<>();
+    // TODO delete
+    public static int loopCounter;
+
+    public Set<Board> solve() throws OutOfRangeException, CloneNotSupportedException, Exception {
 
         // TODO delete
-        counter++;
-        if (counter > 10) {
-            System.out.println("COUNTER >10 - EXIT");
-            return solutions;
-        }
-        System.out.println("\nFilling evident values...");
+        loopCounter++;
+        System.out.println("loopCounter: " + loopCounter);
+//        if (loopCounter > 10) {System.exit(0);}
+
+        Set<Board> solutions = new HashSet<>();
+
+//        System.out.println("\nFilling evident values...");
 
         fillAllEvidentValues();
 
         // TODO delete
-        System.out.println(this.toString());
+//        System.out.println(this.toString());
 
         if (isSolved()) {
             solutions.add(this);
 
             // TODO delete
-            System.out.println("SOLVED");
+//            System.out.println("SOLVED");
 
             return solutions;
         }
         if (isUnsolvable()) {
 
             // TODO delete
-            System.out.println("UNSOLVABLE");
+//            System.out.println("UNSOLVABLE");
 
             return solutions; // 0 elements
         }
 
-        for (int column = 0; column < 9; column++) {
-            for (int row = 0; row < 9; row++) {
-                if (fields[column][row].getValue() == 0 && fields[column][row].getPossibleValues().size() > 0) {
-                    for (int possibleValue : fields[column][row].getPossibleValues()) {
-                        Board copiedBoardForTestingValues = this.copy();
-                        copiedBoardForTestingValues.setFieldsValue(column, row, possibleValue);
+        ColumnRowDto fieldWithMinimumPossibleValues = findFieldWithMinimumPossibleValues();
+        int checkedFieldColumn = fieldWithMinimumPossibleValues.getColumn();
+        int checkedFieldRow = fieldWithMinimumPossibleValues.getRow();
 
-                        // TODO delete
-                        System.out.println("Testing: value " + possibleValue + " to field: " + column + ", " + row);
+        // TODO delete
+//        System.out.println("Field with minimum possible values: " + checkedFieldColumn + ", " + checkedFieldRow);
 
-                        copiedBoardForTestingValues.fillAllEvidentValues();
+        for (int possibleValue : fields[checkedFieldColumn][checkedFieldRow].getPossibleValues()) {
+            Board copiedBoardForTestingValues = this.deepCopy();
+            copiedBoardForTestingValues.setFieldsValue(checkedFieldColumn, checkedFieldRow, possibleValue);
 
-                        // TODO delete
-                       // System.out.println(copiedBoardForTestingValues.toString());
+            // TODO delete
+//                        System.out.println("Testing: value " + possibleValue + " to field: " + checkedFieldColumn + ", " + checkedFieldRow);
+//                        System.out.println("Filling evident values:");
 
-                        if (copiedBoardForTestingValues.isSolved()) {
-                            solutions.add(copiedBoardForTestingValues);
+            copiedBoardForTestingValues.fillAllEvidentValues();
 
-                            // TODO delete
-                            System.out.println("SOLVED");
-                        }
-                    }
+            // TODO delete
+//                        System.out.println(copiedBoardForTestingValues.toString());
+
+            if (copiedBoardForTestingValues.isSolved()) {
+                solutions.add(copiedBoardForTestingValues);
+
+                // TODO delete
+//                            System.out.println("SOLVED");
+
+            } else {
+                if (!copiedBoardForTestingValues.isUnsolvable()) { // is not solved but there are fields with possible values
+
+                    //TODO delete
+//                    System.out.println("solving copied board");
+
+                    solutions.addAll(copiedBoardForTestingValues.solve());
+
+                    //TODO delete
+//                    System.out.println("returning from recurrence method");
+                }
+                // TODO delete
+                else {
+//                                System.out.println("UNSOLVED");
                 }
             }
         }
         return solutions;
     }
 
-    public Board copy() throws CloneNotSupportedException {
+    public Board deepCopy() throws CloneNotSupportedException {
         Board clonedBoard = (Board)super.clone();
         clonedBoard.fields = new Field[9][9];
         for (int column = 0; column < 9; column++) {
