@@ -2,7 +2,6 @@ package com.kodilla.spring;
 
 import com.kodilla.spring.library.LibraryDbController;
 import com.kodilla.spring.shape.Shape;
-import com.kodilla.spring.shape.Square;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,7 +49,7 @@ public class SpringRunnerTestSuite {
     public void testSquareLoadedIntoContainer() {
         // Given
         ApplicationContext context = new AnnotationConfigApplicationContext("com.kodilla.spring");
-        Shape shape = context.getBean(Square.class);
+        Shape shape = (Shape)context.getBean("square");
 
         // When
         String name = shape.getShapeName();
