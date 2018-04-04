@@ -5,6 +5,12 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@NamedNativeQuery(
+        name = "Company.retrieveCompaniesWithNameBeginningWith",
+        query = "SELECT * FROM COMPANIES WHERE LEFT(COMPANY_NAME, 3) = ':NAME_BEGINNING'",
+        resultClass = Company.class
+)
 @Entity
 @Table(name = "COMPANIES")
 public class Company {

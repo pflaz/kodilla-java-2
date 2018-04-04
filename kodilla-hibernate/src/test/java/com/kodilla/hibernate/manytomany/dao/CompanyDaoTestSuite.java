@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.*;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -61,6 +61,30 @@ public class CompanyDaoTestSuite {
         } catch (Exception e) {
             // do nothing
         }
+    }
+
+    @Test
+    public void testRetrievingCompaniesWithNameBeginningWith() {
+        // Given
+        Company company1 = new Company("ABC company");
+        Company company2 = new Company("DEF company");
+        Company company3 = new Company("DEF group");
+
+        companyDao.save(company1);
+        companyDao.save(company2);
+        companyDao.save(company3);
+
+        // When
+        List<Company> retrievedCompanies = companyDao.retrieveCompaniesWithNameBeginningWith("DEF");
+
+        // Then
+        Assert.assertEquals(2, retrievedCompanies.size());
+
+        // CleanUp
+        companyDao.delete(company1);
+        companyDao.delete(company2);
+        companyDao.delete(company3);
+
     }
 
 }
