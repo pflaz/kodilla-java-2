@@ -37,7 +37,6 @@ public class BoardTestSuite {
             System.out.println(e);
         }
 
-
         // Then
         System.out.println(board.toString());
 
@@ -45,7 +44,6 @@ public class BoardTestSuite {
         Assert.assertFalse(result2);
         Assert.assertEquals(5, board.getFields()[1][8].getValue());
     }
-
 
     @Test
     public void testFillingDuplicateInRow() {
@@ -92,7 +90,6 @@ public class BoardTestSuite {
         } catch (OutOfRangeException e) {
             System.out.println(e);
         }
-
 
         // Then
         System.out.println(board.toString());
@@ -378,10 +375,36 @@ public class BoardTestSuite {
             System.out.println("\nSolution " + solutionCounter);
             System.out.println(solution.toString());
         }
-
-
-       // Assert.assertEquals(1, solutions.size());
+        Assert.assertEquals(1, solutions.size());
     }
+
+    @Test
+    public void testLevelGetting() {
+
+        // Given
+        Board board = new Board();
+        String[] values = {"529741836", "786539412", "314286579",
+                "295473168", "163892754", "847165923",
+                "458327691", "972614385", "000000000"};
+        try {
+            board.setAllValues(values);
+        } catch (OutOfRangeException | WrongNumberOfValuesException e) {
+            System.out.println(e);
+        }
+
+        int level = 0;
+        // When
+        try {
+            level = board.getLevel();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        // Then
+
+        Assert.assertEquals(1, level);
+    }
+
 
     @Test
     public void testBoardsEqualing() {

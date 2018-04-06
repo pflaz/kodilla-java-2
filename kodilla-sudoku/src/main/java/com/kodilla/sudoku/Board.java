@@ -1,17 +1,12 @@
 package com.kodilla.sudoku;
 
-import com.kodilla.sudoku.exceptions.OutOfRangeException;
-import com.kodilla.sudoku.exceptions.SolvedBoardException;
-import com.kodilla.sudoku.exceptions.UnsolvableBoardException;
-import com.kodilla.sudoku.exceptions.WrongNumberOfValuesException;
+import com.kodilla.sudoku.exceptions.*;
 
 import java.util.*;
 
 public class Board extends Prototype {
     private Field[][] fields = new Field[9][9];
-
-    // TODO delete
-    public static int counter = 0;
+    private static int level = 0;
 
     public Board() {
         for (int column = 0; column < 9; column++) {
@@ -19,6 +14,15 @@ public class Board extends Prototype {
                 fields[column][row] = new Field();
             }
         }
+    }
+
+    public Field[][] getFields() {
+        return fields;
+    }
+
+    public int getLevel() throws Exception {
+        if (level == 0) solve();
+        return level;
     }
 
     @Override
@@ -32,6 +36,46 @@ public class Board extends Prototype {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(fields);
+    }
+
+
+
+    public boolean setAllValues(String[] values) throws WrongNumberOfValuesException, OutOfRangeException {
+        if (values.length != 9) throw new WrongNumberOfValuesException();
+        for (int row = 0; row < 9; row ++) {
+            if (!setRowsValues(row, values[row])) return false;
+        }
+        return true;
+    }
+
+    public boolean setRowsValues(int row, String values) throws WrongNumberOfValuesException, OutOfRangeException {
+        if (values.length() != 9) throw new WrongNumberOfValuesException();
+        for (int column = 0; column < 9; column++) {
+            if (Character.getNumericValue(values.charAt(column)) == 0) continue;
+            if (!setFieldsValue(column, row, Character.getNumericValue(values.charAt(column)))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean setFieldsValue(int column, int row, int value) throws OutOfRangeException {
+        if (column < 0 || column > 8 || row < 0 || row > 8 || value < 1 || value > 9) {
+            throw new OutOfRangeException();
+        }
+        if (checkValuePresenceInRow(value, row) ||
+                checkValuePresenceInColumn(value, column) ||
+                checkValuePresenceInBlock(value, getBlock(column, row))) {
+            return false;
+        }
+        boolean result =  fields[column][row].setValue(value);
+
+        if (result) {
+            setAsImpossibleInRow(row, value);
+            setAsImpossibleInColumn(column, value);
+            setAsImpossibleInBlock(getBlock(column, row), value);
+        }
+        return result;
     }
 
     private boolean checkValuePresenceInRow(int value, int row) {
@@ -59,6 +103,19 @@ public class Board extends Prototype {
         return false;
     }
 
+    private int getBlock(int column, int row) throws OutOfRangeException {
+        if (column >= 0 && column <= 2 && row >= 0 && row <= 2) return 1;
+        if (column >= 3 && column <= 5 && row >= 0 && row <= 2) return 2;
+        if (column >= 6 && column <= 8 && row >= 0 && row <= 2) return 3;
+        if (column >= 0 && column <= 2 && row >= 3 && row <= 5) return 4;
+        if (column >= 3 && column <= 5 && row >= 3 && row <= 5) return 5;
+        if (column >= 6 && column <= 8 && row >= 3 && row <= 5) return 6;
+        if (column >= 0 && column <= 2 && row >= 6 && row <= 8) return 7;
+        if (column >= 3 && column <= 5 && row >= 6 && row <= 8) return 8;
+        if (column >= 6 && column <= 8 && row >= 6 && row <= 8) return 9;
+        throw new OutOfRangeException();
+    }
+
     private void setAsImpossibleInRow(int row, int value) {
         for (int column = 0; column < 9; column++) {
             fields[column][row].deleteFromPossibleValues(value);
@@ -82,64 +139,6 @@ public class Board extends Prototype {
         }
     }
 
-    private int getBlock(int column, int row) throws OutOfRangeException {
-        if (column >= 0 && column <= 2 && row >= 0 && row <= 2) return 1;
-        if (column >= 3 && column <= 5 && row >= 0 && row <= 2) return 2;
-        if (column >= 6 && column <= 8 && row >= 0 && row <= 2) return 3;
-        if (column >= 0 && column <= 2 && row >= 3 && row <= 5) return 4;
-        if (column >= 3 && column <= 5 && row >= 3 && row <= 5) return 5;
-        if (column >= 6 && column <= 8 && row >= 3 && row <= 5) return 6;
-        if (column >= 0 && column <= 2 && row >= 6 && row <= 8) return 7;
-        if (column >= 3 && column <= 5 && row >= 6 && row <= 8) return 8;
-        if (column >= 6 && column <= 8 && row >= 6 && row <= 8) return 9;
-        throw new OutOfRangeException();
-
-    }
-
-    public boolean setFieldsValue(int column, int row, int value) throws OutOfRangeException {
-
-        if (column < 0 || column > 8 || row < 0 || row > 8 || value < 1 || value > 9) {
-            throw new OutOfRangeException();
-        }
-        if (checkValuePresenceInRow(value, row) ||
-                checkValuePresenceInColumn(value, column) ||
-                checkValuePresenceInBlock(value, getBlock(column, row))) {
-            return false;
-        }
-
-        boolean result =  fields[column][row].setValue(value);
-
-        if (result) {
-            setAsImpossibleInRow(row, value);
-            setAsImpossibleInColumn(column, value);
-            setAsImpossibleInBlock(getBlock(column, row), value);
-        }
-        return result;
-    }
-
-    public boolean setRowsValues(int row, String values) throws WrongNumberOfValuesException, OutOfRangeException {
-        if (values.length() != 9) throw new WrongNumberOfValuesException();
-
-        boolean result;
-        for (int column = 0; column < 9; column++) {
-            if (Character.getNumericValue(values.charAt(column)) == 0) continue;
-            if (!setFieldsValue(column, row, Character.getNumericValue(values.charAt(column)))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean setAllValues(String[] values) throws WrongNumberOfValuesException, OutOfRangeException {
-        if (values.length != 9) throw new WrongNumberOfValuesException();
-
-        boolean result;
-        for (int row = 0; row < 9; row ++) {
-            if (!setRowsValues(row, values[row])) return false;
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
         String currentValue;
@@ -149,16 +148,14 @@ public class Board extends Prototype {
             for (int column = 0; column <= 8; column++) {
                 currentValue = String.valueOf(fields[column][row].getValue());
                 if (currentValue.equals("0")) {currentValue = " ";}
-                result.append("| " + currentValue + " ");
+                result.append("| ").append(currentValue).append(" ");
             }
             result.append("|\n-------------------------------------\n");
         }
         return result.toString();
     }
 
-    public Field[][] getFields() {
-        return fields;
-    }
+
 
     public int fillEvidentValuesOnce() throws OutOfRangeException {
         int filled = 0;
@@ -206,7 +203,7 @@ public class Board extends Prototype {
         return sumOfFilledEvidentValues;
     }
 
-    public ColumnRowDto findFieldWithMinimumPossibleValues() throws UnsolvableBoardException, SolvedBoardException, Exception {
+    public ColumnRowDto findFieldWithMinimumPossibleValues() throws UnsolvableBoardException, SolvedBoardException, CannotFindFieldWithMinimumPossibleValuesException {
         if (isUnsolvable()) throw new UnsolvableBoardException();
         if (isSolved()) throw new SolvedBoardException();
         int min = 0;
@@ -222,87 +219,31 @@ public class Board extends Prototype {
                 }
             }
         }
-        if (columnRowDto.getColumn() == -1 || columnRowDto.getRow() == -1) throw new Exception();
+        if (columnRowDto.getColumn() == -1 || columnRowDto.getRow() == -1) throw new CannotFindFieldWithMinimumPossibleValuesException();
         return columnRowDto;
     }
 
-    // TODO delete
-    public static int loopCounter;
-
-    public Set<Board> solve() throws OutOfRangeException, CloneNotSupportedException, Exception {
-
-        // TODO delete
-        loopCounter++;
-        System.out.println("loopCounter: " + loopCounter);
-//        if (loopCounter > 10) {System.exit(0);}
-
+    public Set<Board> solve() throws OutOfRangeException, CloneNotSupportedException, CannotFindFieldWithMinimumPossibleValuesException, UnsolvableBoardException, SolvedBoardException {
         Set<Board> solutions = new HashSet<>();
-
-//        System.out.println("\nFilling evident values...");
-
         fillAllEvidentValues();
-
-        // TODO delete
-//        System.out.println(this.toString());
+        if (level == 0) {level++;}
 
         if (isSolved()) {
             solutions.add(this);
-
-            // TODO delete
-//            System.out.println("SOLVED");
-
             return solutions;
         }
         if (isUnsolvable()) {
-
-            // TODO delete
-//            System.out.println("UNSOLVABLE");
-
             return solutions; // 0 elements
         }
 
+        level++;
         ColumnRowDto fieldWithMinimumPossibleValues = findFieldWithMinimumPossibleValues();
         int checkedFieldColumn = fieldWithMinimumPossibleValues.getColumn();
         int checkedFieldRow = fieldWithMinimumPossibleValues.getRow();
-
-        // TODO delete
-//        System.out.println("Field with minimum possible values: " + checkedFieldColumn + ", " + checkedFieldRow);
-
         for (int possibleValue : fields[checkedFieldColumn][checkedFieldRow].getPossibleValues()) {
             Board copiedBoardForTestingValues = this.deepCopy();
             copiedBoardForTestingValues.setFieldsValue(checkedFieldColumn, checkedFieldRow, possibleValue);
-
-            // TODO delete
-//                        System.out.println("Testing: value " + possibleValue + " to field: " + checkedFieldColumn + ", " + checkedFieldRow);
-//                        System.out.println("Filling evident values:");
-
-            copiedBoardForTestingValues.fillAllEvidentValues();
-
-            // TODO delete
-//                        System.out.println(copiedBoardForTestingValues.toString());
-
-            if (copiedBoardForTestingValues.isSolved()) {
-                solutions.add(copiedBoardForTestingValues);
-
-                // TODO delete
-//                            System.out.println("SOLVED");
-
-            } else {
-                if (!copiedBoardForTestingValues.isUnsolvable()) { // is not solved but there are fields with possible values
-
-                    //TODO delete
-//                    System.out.println("solving copied board");
-
-                    solutions.addAll(copiedBoardForTestingValues.solve());
-
-                    //TODO delete
-//                    System.out.println("returning from recurrence method");
-                }
-                // TODO delete
-                else {
-//                                System.out.println("UNSOLVED");
-                }
-            }
+            solutions.addAll(copiedBoardForTestingValues.solve());
         }
         return solutions;
     }

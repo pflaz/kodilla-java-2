@@ -21,7 +21,6 @@ public class FieldTestSuite {
         field2.deleteFromPossibleValues(1);
 
         // Then
-
         System.out.println("Field1's possible values:");
         field1.getPossibleValues().stream()
                 .forEach(System.out::println);
@@ -44,35 +43,28 @@ public class FieldTestSuite {
         field2.setValue(1);
 
         // When & Then
-        Assert.assertTrue(field1.equals(field2));
+        Assert.assertEquals(field1, field2);
 
     }
 
     @Test
     public void testFieldsArraysComparing() {
         // Given
-
-
         Field[][] array1 = new Field[2][2];
         Field[][] array2 = new Field[2][2];
         array1[0][0] = new Field();
         array1[1][0] = new Field();
         array2[0][0] = new Field();
         array2[1][0] = new Field();
-
         array1[0][0].setValue(1);
         array2[0][0].setValue(1);
         array1[1][0].setValue(2);
         array2[1][0].setValue(2);
-
 
         // When
         boolean comparison = Arrays.deepEquals(array1, array2);
 
         // Then
         Assert.assertTrue(comparison);
-
-
     }
-
 }

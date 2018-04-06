@@ -11,19 +11,6 @@ public class Solver {
     private String[] rows = new String[9];
     private Board mainBoard;
 
-    private boolean checkRowsCorrectness(String row) throws WrongNumberOfValuesException, WrongValuesException {
-        if (row.length() != 9) {
-            throw new WrongNumberOfValuesException();
-        }
-
-        for (char value : row.toCharArray()) {
-            if (!(Character.getNumericValue(value) >= 0 && Character.getNumericValue(value) <= 9)) {
-                throw new WrongValuesException();
-            }
-        }
-        return true;
-    }
-
     public boolean putValues() {
         System.out.println("Please provide known values to the board (for unknown value, please provide 0).");
         System.out.println("If you want to exit, please provide: EXIT");
@@ -50,6 +37,19 @@ public class Solver {
             if (exit) return false;
         }
         System.out.println("Values provided.");
+        return true;
+    }
+
+    private boolean checkRowsCorrectness(String row) throws WrongNumberOfValuesException, WrongValuesException {
+        if (row.length() != 9) {
+            throw new WrongNumberOfValuesException();
+        }
+
+        for (char value : row.toCharArray()) {
+            if (!(Character.getNumericValue(value) >= 0 && Character.getNumericValue(value) <= 9)) {
+                throw new WrongValuesException();
+            }
+        }
         return true;
     }
 
@@ -90,5 +90,12 @@ public class Solver {
         return true;
     }
 
-
+    public void showLevel() {
+        try {
+            int level =  mainBoard.getLevel();
+            System.out.println("This sudoku's level is: " + level);
+        } catch (Exception e) {
+            System.out.println("An error occured.");
+        }
+    }
 }
