@@ -74,6 +74,7 @@ public class Solver {
 
     public boolean showSolutions() {
         Set<Board> solutions = null;
+
         try {
             solutions = mainBoard.solve();
         } catch (Exception e) {
@@ -87,6 +88,8 @@ public class Solver {
             System.out.println("\nSolution " + solutionCounter);
             System.out.println(solution.toString());
         }
+        System.out.println();
+
         return true;
     }
 
