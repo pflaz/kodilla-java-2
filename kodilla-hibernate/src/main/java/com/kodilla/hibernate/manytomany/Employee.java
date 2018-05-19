@@ -5,9 +5,14 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @NamedQuery(
         name = "Employee.retrieveEmployeesWithLastnameEquals",
         query = "FROM Employee WHERE lastname = :LASTNAME"
+)
+@NamedNativeQuery(
+        name = "Employee.findEmployeeByLastnameFragment",
+        query = "SELECT * FROM EMPLOYEES WHERE LASTNAME LIKE :FRAGMENT"
 )
 @Entity
 @Table(name = "EMPLOYEES")

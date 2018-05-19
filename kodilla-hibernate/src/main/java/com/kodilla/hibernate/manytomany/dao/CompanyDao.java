@@ -14,4 +14,7 @@ import java.util.List;
 public interface CompanyDao extends CrudRepository<Company, Integer> {
     @Query(nativeQuery = true)
     List<Company> retrieveCompaniesWithNameBeginningWith(@Param("NAME_BEGINNING") String nameBeginning);
+
+    @Query(nativeQuery = true)
+    List<Company> findByNameFragment(@Param("FRAGMENT") String fragment);
 }
