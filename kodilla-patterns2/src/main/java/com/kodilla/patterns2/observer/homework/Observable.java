@@ -1,4 +1,4 @@
-package com.kodilla.patterns2.observer.forum;
+package com.kodilla.patterns2.observer.homework;
 
 public interface Observable {
     void registerObserver(Observer observer);
