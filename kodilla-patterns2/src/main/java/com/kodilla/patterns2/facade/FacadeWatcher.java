@@ -15,7 +15,7 @@ public class FacadeWatcher {
 
     /*    @Before("execution(* com.kodilla.patterns2.facade.api.OrderFasade.processOrder(..))" +
         "&& args(OrderDto order, Long userId")*/
-    @Before("execution(* com.kodilla.patterns2.facade.api.OrderFasade.processOrder(..))")
+    @Before("execution(* com.kodilla.patterns2.facade.api.OrderFacade.processOrder(..))")
 //    public void logEvent(OrderDto order, Long userId) {
     public void logEvent() {
         LOGGER.info("Logging the event (caused by aspect)");
