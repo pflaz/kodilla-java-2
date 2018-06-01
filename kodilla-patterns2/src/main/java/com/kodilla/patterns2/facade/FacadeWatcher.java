@@ -13,11 +13,10 @@ public class FacadeWatcher {
     private static final Logger LOGGER = LoggerFactory.getLogger(FacadeWatcher.class);
     private OrderDto orderDto;
 
-    /*    @Before("execution(* com.kodilla.patterns2.facade.api.OrderFasade.processOrder(..))" +
-        "&& args(OrderDto order, Long userId")*/
-    @Before("execution(* com.kodilla.patterns2.facade.api.OrderFacade.processOrder(..))")
-//    public void logEvent(OrderDto order, Long userId) {
-    public void logEvent() {
-        LOGGER.info("Logging the event (caused by aspect)");
+    @Before("execution(* com.kodilla.patterns2.facade.api.OrderFacade.processOrder(..)) && args(order, userId) && target(object)")
+//    @Before("execution(* com.kodilla.patterns2.facade.api.OrderFacade.processOrder(..))")
+    public void logEvent(OrderDto order, Long userId, Object object) {
+//    public void logEvent() {
+        LOGGER.info("Logging the event (caused by aspect) " + order + "!!!!!!!" + userId);
     }
 }
